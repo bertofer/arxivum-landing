@@ -1,0 +1,37 @@
+.feat {
+  height: 350px;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.feat h2 {
+  font-size: 2em;
+}
+
+.feat p {
+  font-size: 1.5em;
+  line-height: 1.5em;
+}
+
+.feat-text {
+  max-width: 450px;
+}
+
+.feat img {
+  max-height: 250px;
+}
+
+.feat-1 {
+  background-color: #e8e8e865;
+}
+
+.feat-2 {
+  background-color: #e8e8e840;
+}
+
+.feat-3 {
+  background-color: #e8e8e820;
+}

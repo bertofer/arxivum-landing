@@ -1,0 +1,144 @@
+<div class='section-title'><strong>Getting started</strong></div>
+<div class='started container'>
+  <div class='row'>
+    <div class='md-container col-lg-8 offset-lg-2 col-sm-10 offset-sm-3'>
+      <markdown>
+          There are two different repositories for this project: Frontend and Backend.
+
+          # Run the backend
+          The backend has 3 different modules:
+          - API
+          - Tracker
+          - Webseed
+
+          ## From source code
+          Each of the modules has a npm script to start it automatically (`start-api`, `start-tracker` and `start-webseed`). You can also use the index on the root of the repository, it is a simple implementation of a reverse proxy to use during development. It is recommended to use something like nginx for production proxy of the different modules.
+
+          ## From docker image
+          Links:
+          - Tracker https://hub.docker.com/r/albertoferbcn/arxivum-tracker/
+          - API https://hub.docker.com/r/albertoferbcn/arxivum-api/
+          - Webseed https://hub.docker.com/r/albertoferbcn/arxivum-webseed/
+
+          These images are configured via enviroment variables. These are the variables
+          that each one accepts:
+          ### **Api**
+          ```yaml
+            - NODE_ENV: prod, dev, ... Use prod for production environments
+            - PUBLIC_URL: The url where the frontend will be accessed
+            - DATABASE_URL: MongoDB database where to connect
+            - ADMIN_EMAIL: The admin user is created on startup using this email
+            - ADMIN_PASSWORD: Password of the admin user at the moment of creation
+            - JWT_SECRET: A secret to sign the authentication tokens.
+            - WEBSEED_FOLDER: Root folder of the files. Use /app/files by default
+            - PUBLIC_API_URL: Public URL to access this API
+            - PUBLIC_TRACKER_URL: Public URL of the tracker
+            - PUBLIC_WEBSEED_URL: Public URL of the webseed
+            - EMAILER_PORT: Al emailer options are to connect nodemailer. Port of email service
+            - EMAILER_HOST: SMTP host
+            - EMAILER_PUBLIC_EMAIL: Public email
+            - EMAILER_AUTH_USER: Authentication user
+            - EMAILER_AUTH_PASSWORD: Authentication password
+          ```
+          ### **Tracker**
+
+          The tracker does not need to configure any environment variable
+
+          ### **Webseed**
+
+          The webseed foes not need any environment variable, but it needs to share a volume with the
+          API for the files. The /app/files folder is the default folder where files will go inside
+          both of the modules. Make sure these folders point to the same volume on disk.
+
+          Use the command `docker run` like the frontend with the backend images.
+
+          ## Testing
+          The Backend has a test suite that can be run with `npm test`. Make sure you have a mongoDB server running locally.
+
+          # Run the frontend
+          You can start the frontend from the source code, or using the provided Docker image
+
+          ## From source code
+          Download the code from [Github] and run `npm install` and `npm run start`.
+
+          Use the environment variables `API_URL` and `TRACKER_URL` to modify the url where to locate api and tracker, or directly modify the `environment.ts` file.
+
+          ## From docker
+          To run from docker, use this [image](https://hub.docker.com/r/albertoferbcn/arxivum-front/) and run it with docker, like:
+          ```sh
+          docker run \
+            -e "API_URL=your api url" \
+            -e "TRACKER_URL=your tracker url"
+            albertoferbcn/arxivum-front
+          ```
+
+          This docker image will build the frontend with the environment variables set and will start serving the frontend.
+
+          # Using Docker compose
+          Youcan use docker compose to setup the whole stack in one single file, like this:
+
+          ```yaml
+          version: "3"
+          services:
+            nginx:
+              image: albertoferbcn/nginx-proxy:latest
+              ports:
+                - 443:443
+                - 80:80
+              volumes:
+                - /var/run/docker.sock:/tmp/docker.sock:ro
+                - /root/certs:/etc/nginx/certs
+            mongo:
+              image: mongo
+              ports:
+                - 27017:27017
+            api:
+              image: albertoferbcn/arxivum-api
+              volumes:
+                - ./files:/app/files
+              links:
+                - mongo
+              environment:
+                - VIRTUAL_HOST=arxivum-api.bertofer.me
+                - NODE_ENV=prod
+                - PUBLIC_URL=https://arxivum.bertofer.me
+                - DATABASE_URL=mongodb://mongo/arxivum-prod
+                - ADMIN_EMAIL=email@bertofer.me
+                - ADMIN_PASSWORD=bertofer.me
+                - JWT_SECRET=j324uD*iDA*)8032klsAD
+                - WEBSEED_FOLDER=/app/files
+                - PUBLIC_API_URL=https://arxivum-api.bertofer.me
+                - PUBLIC_TRACKER_URL=https://arxivum-tracker.bertofer.me
+                - PUBLIC_WEBSEED_URL=https://arxivum-webseed.bertofer.me
+                - EMAILER_PORT=587
+                - EMAILER_HOST=''
+                - EMAILER_PUBLIC_EMAIL=alberto.fernandez.cubero@est.fib.upc.edu
+                - EMAILER_AUTH_USER=alberto.fernandez.cubero
+                - EMAILER_AUTH_PASSWORD=***********
+                - DEBUG=arxivum:*
+            tracker:
+              image: albertoferbcn/arxivum-tracker
+              environment:
+                - VIRTUAL_HOST=arxivum-tracker.bertofer.me
+                - DEBUG=arxivum:*
+            webseed:
+              image: albertoferbcn/arxivum-webseed
+              volumes:
+                - ./files:/app/files
+              environment:
+                - VIRTUAL_HOST=arxivum-webseed.bertofer.me
+                - DEBUG=arxivum:*
+            front:
+              image: albertoferbcn/arxivum-front
+              environment:
+                - VIRTUAL_HOST=arxivum.bertofer.me
+                - NODE_ENV=prod
+                - API_URL=https://arxivum-api.bertofer.me/api
+                - TRACKER_URL=https://arxivum-tracker.bertofer.me
+          ```
+
+
+      </markdown>
+    </div>
+  </div>
+</div>

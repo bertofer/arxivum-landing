@@ -1,0 +1,13 @@
+.header-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+.header-actions a {
+  margin-right: 10px;
+  font-size: 1em;
+}
+.header-actions a i {
+  margin-right: 10px;
+}

@@ -1,0 +1,11 @@
+.started .row {
+  width: 100%;
+}
+
+.container {
+  min-width: 100%;
+  background-color: #e8e8e865;
+  padding-left: 10%;
+  padding-right: 10%;
+  margin-bottom: 0;
+}
